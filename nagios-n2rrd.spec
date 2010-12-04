@@ -2,7 +2,7 @@
 Summary:	N2RRD/RRD2GRAPH Performance data collector and Graph generator
 Name:		nagios-n2rrd
 Version:	1.4.1
-Release:	0.4
+Release:	0.7
 License:	GPL v2
 Group:		Applications
 Source0:	http://n2rrd.diglinks.com/download/n2rrd-%{version}.tar.gz
@@ -11,7 +11,9 @@ URL:		http://n2rrd.diglinks.com/
 BuildRequires:	rpm-perlprov >= 4.1-13
 BuildRequires:	sed >= 4.0
 Requires:	nagios-common
+Requires:	perl-RRD-Simple
 Requires:	perl-rrdtool
+Requires:	rrdtool
 BuildArch:	noarch
 BuildRoot:	%{tmpdir}/%{name}-%{version}-root-%(id -u -n)
 
@@ -72,12 +74,12 @@ EOF
 cat > n2rrd.cfg <<'EOF'
 define command {
 	command_name    n2rrd-process-host-perfdata
-	command_line    %{nagioslibdir}/n2rrd.pl -c %{_sysconfdir}/n2rrd.conf -D "HOST" -N "%{nagios_status_file}" -C '$HOSTCHECKCOMMAND$' -T $LASTHOSTCHECK$ -H $HOSTNAME$ -s "check_fping" -o "$HOSTPERFDATA$"
+	command_line    %{nagioslibdir}/n2rrd -c %{_sysconfdir}/n2rrd.conf -D "HOST" -N "%{nagios_status_file}" -C '$HOSTCHECKCOMMAND$' -T $LASTHOSTCHECK$ -H $HOSTNAME$ -s "check_fping" -o "$HOSTPERFDATA$"
 }
 
 define command {
 	command_name    n2rrd-process-service-perfdata
-	command_line    %{nagioslibdir}/n2rrd.pl -c %{_sysconfdir}/n2rrd.conf -N "%{nagios_status_file}" -C '$SERVICECHECKCOMMAND$' -e $SERVICEEXECUTIONTIME$ -l $SERVICELATENCY$ -T $LASTSERVICECHECK$ -H $HOSTNAME$ -s "$SERVICEDESC$" -o "$SERVICEPERFDATA$"
+	command_line    %{nagioslibdir}/n2rrd -c %{_sysconfdir}/n2rrd.conf -N "%{nagios_status_file}" -C '$SERVICECHECKCOMMAND$' -e $SERVICEEXECUTIONTIME$ -l $SERVICELATENCY$ -T $LASTSERVICECHECK$ -H $HOSTNAME$ -s "$SERVICEDESC$" -o "$SERVICEPERFDATA$"
 }
 EOF
 
@@ -87,7 +89,7 @@ install -d $RPM_BUILD_ROOT{%{_sysconfdir},/var/lib/nagios/rra}
 install -d $RPM_BUILD_ROOT{%{nagioslibdir},%{nagiosconfdir}/plugins,%{nagioscgidir},%{nagiosdatadir}/js}
 install n2rrd.pl $RPM_BUILD_ROOT%{nagioslibdir}/n2rrd
 cp -a n2rrd.conf $RPM_BUILD_ROOT%{_sysconfdir}
-cp -a n2rrd.cfg $RPM_BUILD_ROOT%{nagiosconfdir}/plugins/n2rrd.conf
+cp -a n2rrd.cfg $RPM_BUILD_ROOT%{nagiosconfdir}/plugins
 
 # rrd2graph
 install -d $RPM_BUILD_ROOT{/var/cache/n2rrd,%{_examplesdir}/%{name}-%{version}}
@@ -114,7 +116,7 @@ rm -rf $RPM_BUILD_ROOT
 %dir %{_sysconfdir}/templates/rewrite
 %dir %{_sysconfdir}/templates/rra
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/n2rrd.conf
-%config(noreplace) %verify(not md5 mtime size) %{nagiosconfdir}/plugins/n2rrd.conf
+%config(noreplace) %verify(not md5 mtime size) %{nagiosconfdir}/plugins/n2rrd.cfg
 %attr(755,root,root) %{nagioslibdir}/n2rrd
 
 %config(noreplace) %verify(not md5 mtime size) %{_sysconfdir}/templates/environment.t
