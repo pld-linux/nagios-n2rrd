@@ -36,11 +36,7 @@ e.g. rrd2graph, Cacti, Drraw, etc.
 %prep
 %setup -q -n n2rrd-%{version}
 
-cp dist-n2rrd.conf n2rrd.conf
-for fdist in $(find templates -name 'dist-*'); do
-	fnew=$(echo $fdist | sed 's/dist-//')
-	mv $fdist $fnew
-done
+find -name 'dist-*' -exec rename 'dist-' '' {} ';'
 
 %{__sed} -i -e '
 	s|@BIN_PERL@|%{__perl} -w|
