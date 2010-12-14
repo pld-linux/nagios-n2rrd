@@ -1,12 +1,12 @@
 %include	/usr/lib/rpm/macros.perl
 Summary:	N2RRD/RRD2GRAPH Performance data collector and Graph generator
 Name:		nagios-n2rrd
-Version:	1.4.1
-Release:	0.7
+Version:	1.4.2
+Release:	0.1
 License:	GPL v2
 Group:		Applications
 Source0:	http://n2rrd.diglinks.com/download/n2rrd-%{version}.tar.gz
-# Source0-md5:	2ef1185a840043d9ffd820fc9decf781
+# Source0-md5:	6cf8b756272b3243fb9d8feae3ff7d72
 URL:		http://n2rrd.diglinks.com/
 BuildRequires:	rpm-perlprov >= 4.1-13
 BuildRequires:	sed >= 4.0
